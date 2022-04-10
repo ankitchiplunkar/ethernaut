@@ -11,26 +11,24 @@ async function main(): Promise<void> {
   // to make sure everything is compiled
   // await run("compile");
   // We get the contract to deploy
-  const [deployer] = await ethers.getSigners();
-  const telephoneAddress = "0x128166A27eD75826C7D83733669620Ae634Ef44F"
+  const [deployer, deployer2] = await ethers.getSigners();
+  const tokenAddress = "0xe2A5eA408CC7DbCc6cd0EbD0207aE3aB117ed916"
 
   console.log(deployer.address);
-  const TelephoneFactory = await ethers.getContractFactory("Telephone");
-  const TelephoneSolvedFactory = await ethers.getContractFactory("TelephoneSolved");
-  const telephone = TelephoneFactory.attach(telephoneAddress);
-  console.log('telephone deployed to: ', telephone.address);
+  const tokenFactory = await ethers.getContractFactory("Token");
+  const token = tokenFactory.attach(tokenAddress);
+  console.log('token deployed to: ', token.address);
 
-  const telephoneSolved = await TelephoneSolvedFactory.deploy(telephone.address);
-  await telephoneSolved.deployed()
-  console.log('telephoneSolved deployed to: ', telephone.address);
+  console.log((await token.balanceOf(deployer.address)).toString())
+  console.log((await token.balanceOf(deployer2.address)).toString())
 
   /*
-  const tx = await telephoneSolved.claim(deployer.address)
+  // the contract does not check for underflow error
+  const tx = await token.transfer(deployer2.address, "21")
   console.log(tx)
   const receipt = await tx.wait()
   console.log(receipt)
   */
-  
 } 
 
 // We recommend this pattern to be able to use async/await everywhere
